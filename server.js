@@ -1,4 +1,6 @@
 const express = require('express');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const app = express();
 const { validateGenre } = require('./utils/validate.js');
 const PORT = process.env.PORT || 3000;
@@ -11,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 //   { id: 4, genre: 'animation', year: 2004, name: 'The Incredibles' },
 //   { id: 5, genre: 'romance', year: 2020, name: 'Holidate' },
 // ];
+
 const genres = [
   { id: 1, value: 'musical' }, 
   { id: 2, value: 'action' }, 
@@ -23,6 +26,12 @@ const genres = [
 
 // middlewares
 app.use(express.json());
+app.use(helmet());
+
+if (app.get('env') === 'development') {
+  console.log('Routes logging enabled . . .');
+  app.use(morgan);
+}
 
 
 
