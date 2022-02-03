@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const errorController = require('../controllers/errorController.js');
 
 
-router.all('/', (req, res) => {
-  res.status(404).send('Endpoint not found!');
-});
+router.all('/', errorController.invalidEndpoint);
 
 
 module.exports = router;

@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const homeController = require('../controllers/homeController.js');
 
 
-router.get('/', (req, res) => {
-  res.send('Welcome to Vidly :)');
-});
+router.get('/', homeController.home);
 
 
 module.exports = router;
