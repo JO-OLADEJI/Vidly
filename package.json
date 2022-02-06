@@ -15,7 +15,8 @@
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "helmet": "^5.0.2",
-    "joi": "^17.5.0"
+    "joi": "^17.5.0",
+    "mongoose": "^6.2.0"
   },
   "devDependencies": {
     "morgan": "^1.10.0",

@@ -1,8 +1,10 @@
 const Joi = require('joi');
 
-const validateGenre = (genre) => {
-  const schema = Joi.string().min(3).max(20).required();
-  return schema.validate(genre);
+const validateGenre = (reqBody) => {
+  const schema = Joi.object({
+    genre: Joi.string().min(3).max(20).required()
+  });
+  return schema.validate(reqBody);
 }
 
 
