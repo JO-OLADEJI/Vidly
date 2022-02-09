@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const debug = require('debug')('dev:start');
 const homeRoute = require('./routes/home.js');
 const genresRoute = require('./routes/genres.js');
+const customerRoute = require('./routes/customers.js');
 const errorRoute = require('./routes/error.js');
 const connectDB = require('./database/connect.js');
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 // routes
 app.use('/', homeRoute);
 app.use('/api/genres', genresRoute);
+app.use('/api/customers', customerRoute);
 app.use('/*', errorRoute);
 
 

@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
 
-const genreSchema = mongoose.Schema({
-  value: String,
+const Genre = mongoose.model('genres', new mongoose.Schema({
+  value: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 255
+  },
   timestamp: {
     type: Date,
     default: Date.now
   }
-});
-const Genre = mongoose.model('genres', genreSchema);
-
+}));
 
 module.exports = Genre;

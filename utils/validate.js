@@ -1,11 +1,32 @@
 const Joi = require('joi');
 
+/**
+ * @param {Object} reqBody - a JSON containing the body of the request
+ * @returns {Object} - a {value, error} object
+ */
 const validateGenre = (reqBody) => {
   const schema = Joi.object({
-    value: Joi.string().min(3).max(20).required()
+    'value': Joi.string().min(3).max(255).required()
   });
   return schema.validate(reqBody);
 }
 
 
-module.exports = { validateGenre };
+/**
+ * @param {Object} reqBody - a JSON containing the body of the request
+ * @returns {Object} - a {value, error} object
+ */
+const validateCustomer = (reqBody) => {
+  const schema = Joi.object({
+    'name': Joi.string().min(3).max(255).required(),
+    'phone': Joi.string().min(5).max(13).required(),
+    'isGold': Joi.bool().default(false)
+  });
+  return schema.validate(reqBody);
+}
+
+
+module.exports = { 
+  validateGenre,
+  validateCustomer
+};
