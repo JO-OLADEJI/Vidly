@@ -37,13 +37,13 @@ class GenreController {
     }
     
     try {
-      const check = await Genre.findOne({ value: value.genre });
+      const check = await Genre.findOne({ 'value': value.value });
       if (check) {
         res.send('Genre already exist!');
         return;
       }
-      const newGenre = await new Genre({ value: value.genre });
-      newGenre.save();
+      const newGenre = new Genre({ 'value': value.value });
+      await newGenre.save();
       res.send(newGenre);
     }
     catch(err) {
@@ -51,43 +51,36 @@ class GenreController {
     }
   }
 
-  // continue mongoDB implementation from here
-  genres = [
-    { id: 1, value: 'musical' }, 
-    { id: 2, value: 'action' }, 
-    { id: 3, value: 'comedy' }, 
-    { id: 4, value: 'animation' }, 
-    { id: 5, value: 'romance' }
-  ];
-  updateOne = (req, res) => {
   
-    const genre_index = this.genres.findIndex((genre) => genre.id === parseInt(req.params.id));
-    if (genre_index === -1) {
-      res.status(404).send(`Genre with ID: ${req.params.id} doesn't exist`);
-      return;
-    }
-  
-    const { value, error } = validateGenre(req.body.genre);
+  updateOne = async (req, res) => {
+    const { value, error } = validateGenre(req.body);
     if (error) {
-      res.status(400).send(error['details'][0]['message']);
+      res.status(404).send(error['details'][0]['message']);
       return;
     }
-    this.genres[genre_index].value = value.toLowerCase();
-    res.send(this.genres[genre_index]);
+    
+    try {
+      const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, {
+        $set: {
+          'value': value.value
+        }
+      }, { new: true });
+      res.send(updatedGenre);
+    }
+    catch(err) {
+      res.status(400).send(err);
+    }
   }
 
 
-  deleteOne = (req, res) => {
-  
-    const genre_index = this.genres.findIndex((genre) => genre.id === parseInt(req.params.id));
-    if (genre_index === -1) {
-      res.status(404).send(`Genre with ID: ${req.params.id} doesn't exist`);
-      return;
+  deleteOne = async (req, res) => {
+    try {
+      const deletedGenre = await Genre.findByIdAndDelete(req.params.id);
+      res.send(deletedGenre);
     }
-  
-    const deletedGenre = this.genres[genre_index];
-    this.genres.splice(genre_index, 1);
-    res.send(deletedGenre);
+    catch(err) {
+      res.status(400).send(err);
+    }
   }
 
 }
