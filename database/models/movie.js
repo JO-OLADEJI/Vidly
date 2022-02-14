@@ -6,7 +6,8 @@ const Movie = mongoose.model('Movies', new mongoose.Schema({
     minlength: 3,
     maxlength: 255,
     required: true,
-    lowercase: true
+    lowercase: true,
+    trim: true
   },
 
   'genre': {

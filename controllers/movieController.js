@@ -20,7 +20,7 @@ class MovieController {
     try {
       const requestedMovie = await Movie.findById(req.params.id);
       if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
-      res.send(result);
+      res.send(requestedMovie);
     }
     catch (exc) {
       res.status(400).send(exc.message);
@@ -35,7 +35,7 @@ class MovieController {
     try {
       // fetch the genre for the movie - for a hybrid data relationship
       const associatedGenre = await Genre
-        .findOne({ 'value': (value.genre).toLowerCase() })
+        .findOne({ '_id': value.genreId })
         .select('value');
       if (!associatedGenre) return res.status(400).send(`Entered movie genre: <${(value.genre).toLowerCase()}> not found!`);
 
@@ -55,14 +55,63 @@ class MovieController {
 
 
   updateOne = async (req, res) => {
-    res.send('Updating movie with the given ID . . .');
+    try {
+      // get the movie - select only the 'title', 'genre', 'numberInStock', 'dailyRentalRate'
+      const requestedMovie = await Movie
+        .findById(req.params.id)
+        .select('title genre numberInStock dailyRentalRate -_id');
+      if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
+
+      // prepare an object to be validated
+      const proposedUpdate = {
+        'title': req.body.title || requestedMovie.title,
+        'genreId': req.body.genreId || (requestedMovie.genre._id).toString(),
+        'numberInStock': req.body.numberInStock || requestedMovie.numberInStock,
+        'dailyRentalRate': req.body.dailyRentalRate || requestedMovie.dailyRentalRate
+      };
+
+      // validate the request
+      const { value, error } = validateMovie(proposedUpdate);
+      if (error) return res.status(400).send(error['details'][0]['message']);
+
+      // fetch the genre for the movie - for a hybrid data relationship
+      const associatedGenre = await Genre
+        .findOne({ '_id': value.genreId })
+        .select('value');
+      if (!associatedGenre) return res.status(400).send(`Entered movie genre: <${(value.genre).toLowerCase()}> not found!`);
+
+      // update the validated movie
+      const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, {
+        $set: {
+          'title': value.title,
+          'genre': associatedGenre,
+          'numberInStock': value.numberInStock,
+          'dailyRentalRate': value.dailyRentalRate
+        },
+        $inc: {
+          __v: 1
+        }
+      }, { new: true });
+
+      // return the update
+      res.send(updatedMovie);
+    }
+    catch (exc) {
+      res.status(400).send(exc.message);
+    }
   }
 
 
   deleteOne = async (req, res) => {
-    res.send('Deleting movie with the given ID . . .');
+    try {
+      const deletedMovie = await Movie.findByIdAndDelete(req.params.id);
+      if (!deletedMovie) return res.status(404).send('Movie with the given ID was not found!');
+      res.send(deletedMovie);
+    }
+    catch (exc) {
+      res.status(400).send(exc.message);
+    }
   }
-
 
 }
 
