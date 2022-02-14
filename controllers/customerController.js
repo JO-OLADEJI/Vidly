@@ -1,4 +1,4 @@
-const Customer = require('../database/schemas/customer.js');
+const Customer = require('../database/models/customer.js');
 const { validateCustomer } = require('../utils/validate.js');
 
 class CustomerController {
@@ -17,10 +17,7 @@ class CustomerController {
   getOne = async (req, res) => {
     try {
       const requestedCustomer = await Customer.findById(req.params.id);
-      if (!requestedCustomer) {
-        res.status(404).send('Customer doesn\'t exist!');
-        return;
-      }
+      if (!requestedCustomer) return res.status(404).send('Customer with the given ID was not found!');
       res.send(requestedCustomer);
     }
     catch(exc) {
@@ -31,10 +28,7 @@ class CustomerController {
 
   createOne = async (req, res) => {
     const { value, error } = validateCustomer(req.body);
-    if (error) {
-      res.status(400).send(error);
-      return;
-    }
+    if (error) return res.status(400).send(error['details'][0]['message']);
 
     const { name, phone, isGold } = value;
     const newCustomer = new Customer({ name, phone, isGold });
@@ -51,10 +45,7 @@ class CustomerController {
   updateOne = async (req, res) => {
     try {
       const requestedCustomer = await Customer.findById(req.params.id);
-      if (!requestedCustomer) {
-        res.status(404).send('Customer doesn\'t exist!');
-        return;
-      }
+      if (!requestedCustomer) return res.status(404).send('Customer with the given ID was not found!');
 
       const { name, phone, isGold } = req.body;
       const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, {

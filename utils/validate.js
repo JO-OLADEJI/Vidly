@@ -26,7 +26,23 @@ const validateCustomer = (reqBody) => {
 }
 
 
+/**
+ * @param {Object} reqBody - a JSON containing the body of the request
+ * @returns {Object} - a {value, error} object
+ */
+const validateMovie = (reqBody) => {
+  const schema = Joi.object({
+    'title': Joi.string().min(3).max(255).required(),
+    'genre': Joi.string().min(3).max(255).required(),
+    'numberInStock': Joi.number().min(0).required(),
+    'dailyRentalRate': Joi.number().min(0).required()
+  });
+  return schema.validate(reqBody);
+}
+
+
 module.exports = { 
   validateGenre,
-  validateCustomer
+  validateCustomer,
+  validateMovie
 };

@@ -4,10 +4,12 @@ const app = express();
 const helmet = require('helmet');
 const morgan = require('morgan');
 const debug = require('debug')('dev:start');
-const homeRoute = require('./routes/home.js');
-const genresRoute = require('./routes/genres.js');
-const customerRoute = require('./routes/customers.js');
-const errorRoute = require('./routes/error.js');
+
+const homeRouter = require('./routes/home.js');
+const genresRouter = require('./routes/genres.js');
+const customerRouter = require('./routes/customers.js');
+const movieRouter = require('./routes/movies.js');
+const errorRouter = require('./routes/error.js');
 const connectDB = require('./database/connect.js');
 const PORT = process.env.PORT || 3000;
 
@@ -26,10 +28,11 @@ if (process.env.NODE_ENV === 'development') {
 
 
 // routes
-app.use('/', homeRoute);
-app.use('/api/genres', genresRoute);
-app.use('/api/customers', customerRoute);
-app.use('/*', errorRoute);
+app.use('/', homeRouter);
+app.use('/api/genres', genresRouter);
+app.use('/api/customers', customerRouter);
+app.use('/api/movies', movieRouter);
+app.use('/*', errorRouter);
 
 
 // listener for requests

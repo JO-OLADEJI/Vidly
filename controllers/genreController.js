@@ -1,5 +1,5 @@
+const Genre = require('../database/models/genre.js');
 const { validateGenre } = require('../utils/validate.js');
-const Genre = require('../database/schemas/genre.js');
 
 class GenreController {
 
@@ -17,10 +17,7 @@ class GenreController {
   getById = async (req, res) => {
     try {
       const result = await Genre.findById(req.params.id);
-      if (!result) {
-        res.status(404).send('Object not found');
-        return;
-      }
+      if (!result) return res.status(404).send('Genre with the given ID was not found!');
       res.send(result);
     }
     catch(err) {
@@ -31,17 +28,12 @@ class GenreController {
 
   createOne = async (req, res) => {
     const { value, error } = validateGenre(req.body);
-    if (error) {
-      res.status(400).send(error['details'][0]['message']);
-      return;
-    }
-    
+    if (error) return res.status(400).send(error['details'][0]['message']);
+
     try {
       const check = await Genre.findOne({ 'value': value.value });
-      if (check) {
-        res.send('Genre already exist!');
-        return;
-      }
+      if (check) return res.status(400).send('Genre with the given ID already exists!');
+
       const newGenre = new Genre({ 'value': value.value });
       await newGenre.save();
       res.send(newGenre);
@@ -54,10 +46,7 @@ class GenreController {
   
   updateOne = async (req, res) => {
     const { value, error } = validateGenre(req.body);
-    if (error) {
-      res.status(404).send(error['details'][0]['message']);
-      return;
-    }
+    if (error) return res.status(400).send(error['details'][0]['message']);
     
     try {
       const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, {
