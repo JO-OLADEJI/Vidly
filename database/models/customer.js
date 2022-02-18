@@ -9,6 +9,7 @@ const Customer = mongoose.model('customers', new mongoose.Schema({
     lowercase: true,
     trim: true
   },
+
   'phone': {
     type: String,
     required: true,
@@ -17,11 +18,13 @@ const Customer = mongoose.model('customers', new mongoose.Schema({
     maxlength: 13,
     trim: true
   },
+  
   'isGold': {
     type: Boolean,
     required: true,
     default: false
   },
+  
   'timestamp': {
     type: Date,
     default: Date.now

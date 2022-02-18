@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Genre = mongoose.model('genres', new mongoose.Schema({
-  value: {
+  'value': {
     type: String,
     required: true,
     minlength: 3,
@@ -9,7 +9,8 @@ const Genre = mongoose.model('genres', new mongoose.Schema({
     lowercase: true,
     trim: true
   },
-  timestamp: {
+  
+  'timestamp': {
     type: Date,
     default: Date.now
   }

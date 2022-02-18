@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Movie = mongoose.model('Movies', new mongoose.Schema({
+const Movie = mongoose.model('movies', new mongoose.Schema({
   'title': {
     type: String,
     minlength: 3,
@@ -21,7 +21,7 @@ const Movie = mongoose.model('Movies', new mongoose.Schema({
     required: true
   },
 
-  'dailyRentalRate': {
+  'dailyRentalFee': {
     type: Number,
     min: 0,
     required: true

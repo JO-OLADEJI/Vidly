@@ -43,7 +43,7 @@ class MovieController {
         'title': value.title,
         'genre': associatedGenre,
         'numberInStock': value.numberInStock,
-        'dailyRentalRate': value.dailyRentalRate
+        'dailyRentalFee': value.dailyRentalFee
       });
       const newMovie = await movie.save();
       res.send(newMovie);
@@ -56,10 +56,10 @@ class MovieController {
 
   updateOne = async (req, res) => {
     try {
-      // get the movie - select only the 'title', 'genre', 'numberInStock', 'dailyRentalRate'
+      // get the movie - select only the 'title', 'genre', 'numberInStock', 'dailyRentalFee'
       const requestedMovie = await Movie
         .findById(req.params.id)
-        .select('title genre numberInStock dailyRentalRate -_id');
+        .select('title genre numberInStock dailyRentalFee -_id');
       if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
 
       // prepare an object to be validated
@@ -67,7 +67,7 @@ class MovieController {
         'title': req.body.title || requestedMovie.title,
         'genreId': req.body.genreId || (requestedMovie.genre._id).toString(),
         'numberInStock': req.body.numberInStock || requestedMovie.numberInStock,
-        'dailyRentalRate': req.body.dailyRentalRate || requestedMovie.dailyRentalRate
+        'dailyRentalFee': req.body.dailyRentalFee || requestedMovie.dailyRentalFee
       };
 
       // validate the request
@@ -86,7 +86,7 @@ class MovieController {
           'title': value.title,
           'genre': associatedGenre,
           'numberInStock': value.numberInStock,
-          'dailyRentalRate': value.dailyRentalRate
+          'dailyRentalFee': value.dailyRentalFee
         },
         $inc: {
           __v: 1
