@@ -1,5 +1,5 @@
 const Joi = require('joi');
-// init Joi objectId package
+Joi.objectId = require('joi-objectid')(Joi)
 
 /**
  * @param {Object} reqBody - a JSON containing the body of the request
@@ -36,7 +36,7 @@ const validateCustomer = (reqBody) => {
 const validateMovie = (reqBody) => {
   const schema = Joi.object({
     'title': Joi.string().min(3).max(255).required(),
-    'genreId': Joi.string().length(24).required(),
+    'genreId': Joi.objectId(),
     'numberInStock': Joi.number().min(0).required(),
     'dailyRentalFee': Joi.number().min(0).required()
   });
@@ -51,8 +51,8 @@ const validateMovie = (reqBody) => {
  */
 const validateRental = (reqBody) => {
   const schema = Joi.object({
-    'customerId': Joi.string().length(24).required(),
-    'movieId': Joi.string().length(24).required()
+    'customerId': Joi.objectId(),
+    'movieId': Joi.objectId()
   });
 
   return schema.validate(reqBody);
