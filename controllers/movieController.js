@@ -7,7 +7,10 @@ class MovieController {
 
   getAll = async (req, res) => {
     try {
-      const allMovies = await Movie.find();
+      const allMovies = await Movie
+        .find()
+        .populate('genre', '_id value');
+
       res.send(allMovies);
     }
     catch (exc) {
@@ -18,7 +21,10 @@ class MovieController {
 
   getOne = async (req, res) => {
     try {
-      const requestedMovie = await Movie.findById(req.params.id);
+      const requestedMovie = await Movie
+        .findById(req.params.id)
+        .populate('genre', '_id value');
+
       if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
       res.send(requestedMovie);
     }
@@ -33,15 +39,13 @@ class MovieController {
     if (error) return res.status(400).send(error['details'][0]['message']);
 
     try {
-      // fetch the genre for the movie - for a hybrid data relationship
-      const associatedGenre = await Genre
-        .findOne({ '_id': value.genreId })
-        .select('value');
-      if (!associatedGenre) return res.status(400).send(`Entered movie genre: <${(value.genre).toLowerCase()}> not found!`);
+      // check if genre exists
+      const genre = await Genre.findById(value.genreId);
+      if (!genre) return res.status(404).send(`Genre with given ID not found!`);
 
       const movie = new Movie({
         'title': value.title,
-        'genre': associatedGenre,
+        'genre': genre._id,
         'numberInStock': value.numberInStock,
         'dailyRentalFee': value.dailyRentalFee
       });
@@ -56,10 +60,11 @@ class MovieController {
 
   updateOne = async (req, res) => {
     try {
-      // get the movie - select only the 'title', 'genre', 'numberInStock', 'dailyRentalFee'
+      // get the movie
       const requestedMovie = await Movie
         .findById(req.params.id)
         .select('title genre numberInStock dailyRentalFee -_id');
+
       if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
 
       // prepare an object to be validated
@@ -74,17 +79,15 @@ class MovieController {
       const { value, error } = validateMovie(proposedUpdate);
       if (error) return res.status(400).send(error['details'][0]['message']);
 
-      // fetch the genre for the movie - for a hybrid data relationship
-      const associatedGenre = await Genre
-        .findOne({ '_id': value.genreId })
-        .select('value');
-      if (!associatedGenre) return res.status(400).send(`Entered movie genre: <${(value.genre).toLowerCase()}> not found!`);
+      // fetch the genre
+      const genre = await Genre.findById(value.genreId);
+      if (!genre) return res.status(404).send(`Genre with given ID not found!`);
 
       // update the validated movie
       const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, {
         $set: {
           'title': value.title,
-          'genre': associatedGenre,
+          'genre': genre._id,
           'numberInStock': value.numberInStock,
           'dailyRentalFee': value.dailyRentalFee
         },

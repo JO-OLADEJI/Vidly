@@ -11,8 +11,9 @@ const Movie = mongoose.model('movies', new mongoose.Schema({
   },
 
   'genre': {
-    type: Object,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'genres'
   },
 
   'numberInStock': {
