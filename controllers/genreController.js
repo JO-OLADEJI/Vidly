@@ -8,8 +8,8 @@ class GenreController {
       const result = await Genre.find();
       res.send(result);
     }
-    catch(err) {
-      res.status(400).send(err);
+    catch (exc) {
+      res.status(500).send(exc.message);
     }
   }
   
@@ -20,8 +20,8 @@ class GenreController {
       if (!result) return res.status(404).send('Genre with the given ID was not found!');
       res.send(result);
     }
-    catch(err) {
-      res.status(400).send(err);
+    catch (exc) {
+      res.status(500).send(exc.message);
     }
   }
 
@@ -38,8 +38,8 @@ class GenreController {
       await newGenre.save();
       res.send(newGenre);
     }
-    catch(err) {
-      res.status(400).send(err);
+    catch (exc) {
+      res.status(500).send(exc.message);
     }
   }
 
@@ -56,8 +56,8 @@ class GenreController {
       }, { new: true });
       res.send(updatedGenre);
     }
-    catch(err) {
-      res.status(400).send(err);
+    catch (exc) {
+      res.status(500).send(exc.message);
     }
   }
 
@@ -67,8 +67,8 @@ class GenreController {
       const deletedGenre = await Genre.findByIdAndDelete(req.params.id);
       res.send(deletedGenre);
     }
-    catch(err) {
-      res.status(400).send(err);
+    catch (exc) {
+      res.status(500).send(exc.message);
     }
   }
 
