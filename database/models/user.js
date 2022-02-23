@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
+const jwt = require('jsonwebtoken');
 
 const userSchema = mongoose.Schema({
   'name': {
@@ -16,7 +16,9 @@ const userSchema = mongoose.Schema({
   'email': {
     type: String,
     required: true,
+    lowercase: true,
     trim: true,
+    unique: true,
     match: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   },
 
@@ -27,7 +29,7 @@ const userSchema = mongoose.Schema({
   }
 });
 
-userSchema.methods.getAuthToken = function() {
+userSchema.methods.genAuthToken = function() {
   const token = jwt.sign({ '_id': this._id }, process.env.JWT_SECRET);
   return token;
 }

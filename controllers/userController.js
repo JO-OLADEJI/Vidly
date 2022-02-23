@@ -1,11 +1,36 @@
+const User = require('../database/models/user.js');
+const { validateUser } = require('../utils/validate.js');
+const _ = require('lodash');
+const bcrypt = require('bcrypt');
+
 class UserController {
 
   register = async (req, res) => {
-    // verify the request's body
-    // check if an account with the email already exists
-    // create the user
-    // hash the password
-    // authenticate the user: token in header
+    const { value, error } = validateUser(req.body);
+    if (error) return res.status(400).send(error['details'][0]['message']);
+
+    try {
+      // check if an account with the email already exists
+      let user = await User.findOne({ 'email': value.email });
+      if (user) return res.status(400).send('Error: user already exists!');
+
+      user = new User(_.pick(value, ['name', 'email', 'password']));
+
+      // hash the password
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(user.password, salt);
+      user['password'] = passwordHash;
+      await user.save();
+
+      // authenticate the user: token in header
+      const token = user.genAuthToken();
+      res
+        .header('x-auth-token', token)
+        .send(user);
+    }
+    catch (exc) {
+      res.status(500).send(exc.message);
+    }
   }
   
 

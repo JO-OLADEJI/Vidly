@@ -59,9 +59,22 @@ const validateRental = (reqBody) => {
 }
 
 
+
+const validateUser = (reqBody) => {
+  const schema = Joi.object({
+    'name': Joi.string().required().trim().min(5).max(255).lowercase(),
+    'email': Joi.string().required().trim().email(),
+    'password': Joi.string().required().min(6).trim()
+  });
+
+  return schema.validate(reqBody);
+}
+
+
 module.exports = { 
   validateGenre,
   validateCustomer,
   validateMovie,
-  validateRental
+  validateRental,
+  validateUser
 };
