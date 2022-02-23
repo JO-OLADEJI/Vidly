@@ -59,7 +59,10 @@ const validateRental = (reqBody) => {
 }
 
 
-
+/**
+ * @param {Object} reqBody - a JSON containing the body of the request
+ * @returns {Object} - a {value, error} object
+ */
 const validateUser = (reqBody) => {
   const schema = Joi.object({
     'name': Joi.string().required().trim().min(5).max(255).lowercase(),
@@ -71,10 +74,24 @@ const validateUser = (reqBody) => {
 }
 
 
+/**
+ * @param {Object} reqBody - a JSON containing the body of the request
+ * @returns {Object} - a {value, error} object
+ */
+const validateLoginCredentials = (reqBody) => {
+  const schema = Joi.object({
+    'email': Joi.string().email().required(),
+    'password': Joi.string().required()
+  });
+  return schema.validate(reqBody);
+}
+
+
 module.exports = { 
   validateGenre,
   validateCustomer,
   validateMovie,
   validateRental,
-  validateUser
+  validateUser,
+  validateLoginCredentials
 };
