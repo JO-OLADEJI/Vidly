@@ -17,6 +17,7 @@
     "helmet": "^5.0.2",
     "joi": "^17.5.0",
     "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.0"
   },
   "devDependencies": {

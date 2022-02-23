@@ -10,6 +10,7 @@ const genresRouter = require('./routes/genres.js');
 const customerRouter = require('./routes/customers.js');
 const movieRouter = require('./routes/movies.js');
 const rentalRouter = require('./routes/rental.js');
+const userRouter = require('./routes/user.js');
 const errorRouter = require('./routes/error.js');
 const connectDB = require('./database/connect.js');
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use('/api/genres', genresRouter);
 app.use('/api/customers', customerRouter);
 app.use('/api/movies', movieRouter);
 app.use('/api/rentals', rentalRouter);
+app.use('/api/users', userRouter);
 app.use('/*', errorRouter);
 
 
