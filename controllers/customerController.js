@@ -1,34 +1,35 @@
 const Customer = require('../database/models/customer.js');
 const { validateCustomer } = require('../utils/validate.js');
 
+
 class CustomerController {
 
-  getAll = async (req, res) => {
+  getAll = async (req, res, next) => {
     try {
       const allCustomers = await Customer.find();
       res.send(allCustomers);
     }
     catch(exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  getOne = async (req, res) => {
+  getOne = async (req, res, next) => {
     try {
       const requestedCustomer = await Customer.findById(req.params.id);
-      if (!requestedCustomer) return res.status(404).send('Customer with the given ID was not found!');
+      if (!requestedCustomer) return next({ 'code': 404, 'log': 'Customer with given ID not found' });
       res.send(requestedCustomer);
     }
     catch(exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  createOne = async (req, res) => {
+  createOne = async (req, res, next) => {
     const { value, error } = validateCustomer(req.body);
-    if (error) return res.status(400).send(error['details'][0]['message']);
+    if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
 
     const { name, phone, isGold } = value;
     const newCustomer = new Customer({ name, phone, isGold });
@@ -37,15 +38,15 @@ class CustomerController {
       res.send(saved);
     }
     catch(exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  updateOne = async (req, res) => {
+  updateOne = async (req, res, next) => {
     try {
       const requestedCustomer = await Customer.findById(req.params.id);
-      if (!requestedCustomer) return res.status(404).send('Customer with the given ID was not found!');
+      if (!requestedCustomer) return next({ 'code': 404, 'log': 'Customer with given ID not found' });
 
       const { name, phone, isGold } = req.body;
       const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, {
@@ -61,18 +62,19 @@ class CustomerController {
       res.send(updatedCustomer);
     }
     catch(exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  deleteOne = async (req, res) => {
+  deleteOne = async (req, res, next) => {
     try {
       const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
+      if (!deletedCustomer) return next({ 'code': 404, 'log': 'Customer with given ID not found' });
       res.send(deletedCustomer);
     }
     catch(exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 

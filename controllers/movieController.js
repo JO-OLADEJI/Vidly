@@ -5,7 +5,7 @@ const { validateMovie } = require('../utils/validate.js');
 
 class MovieController {
 
-  getAll = async (req, res) => {
+  getAll = async (req, res, next) => {
     try {
       const allMovies = await Movie
         .find()
@@ -14,34 +14,34 @@ class MovieController {
       res.send(allMovies);
     }
     catch (exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  getOne = async (req, res) => {
+  getOne = async (req, res, next) => {
     try {
       const requestedMovie = await Movie
         .findById(req.params.id)
         .populate('genre', '_id value');
 
-      if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
+      if (!requestedMovie) return next({ 'code': 404, 'log': 'Movie with given ID not found' });
       res.send(requestedMovie);
     }
     catch (exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  createOne = async (req, res) => {
+  createOne = async (req, res, next) => {
     const { value, error } = validateMovie(req.body);
-    if (error) return res.status(400).send(error['details'][0]['message']);
+    if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
 
     try {
       // check if genre exists
       const genre = await Genre.findById(value.genreId);
-      if (!genre) return res.status(404).send(`Genre with given ID not found!`);
+      if (!genre) return next({ 'code': 404, 'log': 'Genre with given ID not found' });
 
       const movie = new Movie({
         'title': value.title,
@@ -53,19 +53,19 @@ class MovieController {
       res.send(newMovie);
     }
     catch (exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  updateOne = async (req, res) => {
+  updateOne = async (req, res, next) => {
     try {
       // get the movie
       const requestedMovie = await Movie
         .findById(req.params.id)
         .select('title genre numberInStock dailyRentalFee -_id');
 
-      if (!requestedMovie) return res.status(404).send('Movie with the given ID was not found!');
+      if (!requestedMovie) return next({ 'code': 404, 'log': 'Movie with given ID not found' });
 
       // prepare an object to be validated
       const proposedUpdate = {
@@ -77,11 +77,11 @@ class MovieController {
 
       // validate the request
       const { value, error } = validateMovie(proposedUpdate);
-      if (error) return res.status(400).send(error['details'][0]['message']);
+      if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
 
       // fetch the genre
       const genre = await Genre.findById(value.genreId);
-      if (!genre) return res.status(404).send(`Genre with given ID not found!`);
+      if (!genre) return next({ 'code': 404, 'log': 'Genre with given ID not found' });
 
       // update the validated movie
       const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, {
@@ -100,19 +100,19 @@ class MovieController {
       res.send(updatedMovie);
     }
     catch (exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
 
-  deleteOne = async (req, res) => {
+  deleteOne = async (req, res, next) => {
     try {
       const deletedMovie = await Movie.findByIdAndDelete(req.params.id);
-      if (!deletedMovie) return res.status(404).send('Movie with the given ID was not found!');
+      if (!deletedMovie) return next({ 'code': 404, 'log': 'Movie with given ID not found' });
       res.send(deletedMovie);
     }
     catch (exc) {
-      res.status(400).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 

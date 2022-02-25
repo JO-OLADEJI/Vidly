@@ -7,7 +7,8 @@ const Genre = mongoose.model('genres', new mongoose.Schema({
     minlength: 3,
     maxlength: 255,
     lowercase: true,
-    trim: true
+    trim: true,
+    unique: true
   },
   
   'timestamp': {

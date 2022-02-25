@@ -9,14 +9,14 @@ const jwt = require('jsonwebtoken');
 
 class UserController {
 
-  register = async (req, res) => {
+  register = async (req, res, next) => {
     const { value, error } = validateUser(req.body);
-    if (error) return res.status(400).send(error['details'][0]['message']);
+    if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
 
     try {
       // check if an account with the given email already exists
       let user = await User.findOne({ 'email': value.email });
-      if (user) return res.status(400).send('Error: user already exists!');
+      if (user) return next({ 'code': 400, 'log': 'User already exists' });
 
       user = new User(_.pick(value, ['name', 'email', 'password']));
 
@@ -33,23 +33,23 @@ class UserController {
         .send(user);
     }
     catch (exc) {
-      res.status(500).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
   
 
-  login = async (req, res) => {
+  login = async (req, res, next) => {
     const { value, error } = validateLoginCredentials(req.body);
-    if (error) res.status(400).send(error['details'][0]['message']);
+    if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
 
     try {
       // get the user by email
       const user = await User.findOne({ 'email': value.email });
-      if (!user) return res.status(400).send('Invalid email or password!');
+      if (!user) return next({ 'code': 400, 'log': 'Invalid email or password' });
 
       // compare the password with hash
       const match = await bcrypt.compare(value.password, user.password);
-      if (!match) return res.status(400).send('Invalid email or password!');
+      if (!match) return next({ 'code': 400, 'log': 'Invalid email or password' });
 
       // authenticate the user: token in header
       const token = user.genAuthToken();
@@ -58,15 +58,15 @@ class UserController {
         .send(_.pick(user, ['_id', 'name', 'email']));
     }
     catch (exc) {
-      res.status(500).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
   
 
-  profile = async (req, res) => {
+  profile = async (req, res, next) => {
     // get the token from the request's header
     const token = req.headers['x-auth-token'];
-    if (!token) return res.send(400).send('Error: No token provided!');
+    if (!token) return next({ 'code': 400, 'log': 'No token provided' });
     let encodedObject;
 
     try {
@@ -74,17 +74,17 @@ class UserController {
       encodedObject = jwt.verify(token, process.env.JWT_SECRET);
     }
     catch (exc) {
-      return res.status(401).send(exc.message);
+      return next({ 'code': 401, 'log': exc.message });
     }
 
     try {
       // send the user object
       const user = await User.findById(encodedObject._id);
-      if (!user) return res.status(404).send('Error: user with given token(ID) not found!');
+      if (!user) return next({ 'code': 404, 'log': 'User with given token(ID) not found' });
       res.send(_.pick(user, ['_id', 'name', 'email']));
     }
     catch (exc) {
-      res.status(500).send(exc.message);
+      next({ 'code': 500, 'log': exc.message });
     }
   }
 
