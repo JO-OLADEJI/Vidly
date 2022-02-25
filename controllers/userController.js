@@ -1,7 +1,10 @@
 const User = require('../database/models/user.js');
 const { validateUser, validateLoginCredentials } = require('../utils/validate.js');
+const dotenv = require('dotenv');
+dotenv.config();
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 class UserController {
@@ -62,8 +65,27 @@ class UserController {
 
   profile = async (req, res) => {
     // get the token from the request's header
-    // verify the token - manage errors in case of wrong or no token
-    // send the user object
+    const token = req.headers['x-auth-token'];
+    if (!token) return res.send(400).send('Error: No token provided!');
+    let encodedObject;
+
+    try {
+      // verify the token
+      encodedObject = jwt.verify(token, process.env.JWT_SECRET);
+    }
+    catch (exc) {
+      return res.status(401).send(exc.message);
+    }
+
+    try {
+      // send the user object
+      const user = await User.findById(encodedObject._id);
+      if (!user) return res.status(404).send('Error: user with given token(ID) not found!');
+      res.send(_.pick(user, ['_id', 'name', 'email']));
+    }
+    catch (exc) {
+      res.status(500).send(exc.message);
+    }
   }
 
 }
