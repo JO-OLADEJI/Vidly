@@ -1,4 +1,4 @@
-const Genre = require('../database/models/genre.js');
+const Genre = require('../models/genre.js');
 const { validateGenre } = require('../utils/validate.js');
 
 class GenreController {

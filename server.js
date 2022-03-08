@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const debug = require('debug')('dev:start');
 const pipeline = require('./utils/pipeline.js');
-const connectDB = require('./database/connect.js');
+const connectDB = require('./utils/connectDB.js');
 const PORT = process.env.PORT || 3000;
 
 

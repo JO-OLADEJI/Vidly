@@ -1,4 +1,4 @@
-const User = require('../database/models/user.js');
+const { User } = require('../models/user.js');
 const { validateUser, validateLoginCredentials } = require('../utils/validate.js');
 const dotenv = require('dotenv');
 dotenv.config();

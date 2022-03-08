@@ -1,6 +1,6 @@
-const Customer = require('../database/models/customer.js');
-const Movie = require('../database/models/movie.js');
-const Rental = require('../database/models/rental.js');
+const Customer = require('../models/customer.js');
+const Movie = require('../models/movie.js');
+const Rental = require('../models/rental.js');
 const { validateRental } = require('../utils/validate.js');
 
 

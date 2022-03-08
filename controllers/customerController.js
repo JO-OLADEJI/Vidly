@@ -1,4 +1,4 @@
-const Customer = require('../database/models/customer.js');
+const Customer = require('../models/customer.js');
 const { validateCustomer } = require('../utils/validate.js');
 
 

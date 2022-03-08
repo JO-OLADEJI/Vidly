@@ -1,5 +1,5 @@
-const Movie = require('../database/models/movie.js');
-const Genre = require('../database/models/genre.js');
+const Movie = require('../models/movie.js');
+const Genre = require('../models/genre.js');
 const { validateMovie } = require('../utils/validate.js');
 
 
