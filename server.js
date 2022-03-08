@@ -1,18 +1,8 @@
 require('dotenv/config.js');
 const express = require('express');
 const app = express();
-const helmet = require('helmet');
-const morgan = require('morgan');
 const debug = require('debug')('dev:start');
-
-const homeRouter = require('./routes/home.js');
-const genresRouter = require('./routes/genres.js');
-const customerRouter = require('./routes/customers.js');
-const movieRouter = require('./routes/movies.js');
-const rentalRouter = require('./routes/rental.js');
-const userRouter = require('./routes/user.js');
-const errorRouter = require('./routes/error.js');
-const exceptionHandler = require('./utils/exception.js');
+const pipeline = require('./utils/pipeline.js');
 const connectDB = require('./database/connect.js');
 const PORT = process.env.PORT || 3000;
 
@@ -21,28 +11,8 @@ const PORT = process.env.PORT || 3000;
 connectDB(process.env.DEV_DB_URI);
 
 
-// middlewares
-app.use(express.json());
-app.use(helmet());
-if (process.env.NODE_ENV === 'development') {
-  debug('Routes logging enabled . . .');
-  app.use(morgan('common'));
-}
-
-
-// routes
-app.use('/', homeRouter);
-app.use('/api/genres', genresRouter);
-app.use('/api/customers', customerRouter);
-app.use('/api/movies', movieRouter);
-app.use('/api/rentals', rentalRouter);
-app.use('/api/users', userRouter);
-
-// exception handler
-app.use(exceptionHandler);
-
-// invalid routes
-app.use('/*', errorRouter);
+// load application pipeline
+pipeline(app);
 
 
 // listener for requests
