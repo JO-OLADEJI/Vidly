@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 
 // connect to database: mongoDB
-connectDB(process.env.DEV_DB_URI);
+connectDB();
 
 
 // load application pipeline
@@ -16,7 +16,9 @@ pipeline(app);
 
 
 // listener for requests
-app.listen(
+const server = app.listen(
   PORT, 
-  () => debug(`Server running on http://localhost:${PORT} . . .`)
+  () => debug(`${process.env.NODE_ENV} server running on http://localhost:${PORT} . . .`)
 );
+
+module.exports = server;
