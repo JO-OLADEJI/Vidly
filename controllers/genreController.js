@@ -36,7 +36,7 @@ class GenreController {
 
       const newGenre = new Genre({ 'value': value.value });
       await newGenre.save();
-      res.send(newGenre);
+      res.status(201).send(newGenre);
     }
     catch (exc) {
       next({ 'code': 500, 'log': exc.message });

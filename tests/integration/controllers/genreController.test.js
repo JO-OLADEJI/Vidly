@@ -61,4 +61,36 @@ describe('/api/genres', () => {
 
   });
 
+
+  describe('POST /', () => {
+
+    it('should create a new genre if given input is valid', async () => {
+      const genreObj = { value: 'genre-a' };
+
+      const res = await request(server).post('/api/genres').send(genreObj);
+
+      expect(res.body).toBeDefined();
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty('value', genreObj['value']);
+    });
+
+    it('should return an error with status-code 400 if input is invalid', async () => {
+      const genreObj = { value: 'xy' };
+
+      const res = await request(server).post('/api/genres').send(genreObj);
+      expect(res.status).toBe(400);
+    });
+
+    it('should return an error with status-code 400 if genre value with given input already exists', async () => {
+      const genreObj0 = { value: 'genre-a' };
+      const genreObj1 = { value: 'genre-a' };
+
+      await request(server).post('/api/genres').send(genreObj0);
+      const res = await request(server).post('/api/genres').send(genreObj1);
+
+      expect(res.status).toBe(400);
+    });
+
+  });
+
 });
