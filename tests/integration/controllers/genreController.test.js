@@ -93,4 +93,36 @@ describe('/api/genres', () => {
 
   });
 
+
+  describe('DELETE /:id', () => {
+
+    it('should delete a genre from db if valid ID is given', async () => {
+      const genre = new Genre({ value: 'genre-a' });
+      await genre.save();
+      genreId = genre['_id'];
+
+      const res = await request(server).delete('/api/genres/' + genreId);
+
+      expect(res.body).toBeDefined();
+      expect(res.status).toBe(200);
+      expect(res.body['_id'].toString()).toEqual(genreId.toHexString());
+      expect(res.body['value']).toEqual(genre['value']);
+    });
+
+    it('should return an error with status-code 500 if invalid ID is given', async () => {
+      const invalidId = '123';
+
+      const res = await request(server).delete('/api/genres/' + invalidId);
+      expect(res.status).toBe(500);
+    });
+
+    it('should return an error with status-code 404 if the given ID is valid but not found', async () => {
+      const randomId = mongoose.Types.ObjectId();
+
+      const res = await request(server).delete('/api/genres/' + randomId);
+      expect(res.status).toBe(404);
+    });
+
+  });
+
 });
