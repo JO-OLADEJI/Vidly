@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Genre = require('../models/genre.js');
 const { validateGenre } = require('../utils/validate.js');
 
@@ -45,6 +46,7 @@ class GenreController {
 
   
   updateOne = async (req, res, next) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ 'code': 400, 'log': 'invalid genre ID'});
     const { value, error } = validateGenre(req.body);
     if (error) return next({ 'code': 400, 'log': error['details'][0]['message'] });
     
