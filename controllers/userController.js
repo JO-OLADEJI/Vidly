@@ -29,6 +29,7 @@ class UserController {
       // authenticate the user: token in header
       const token = user.genAuthToken();
       res
+        .status(201)
         .header('x-auth-token', token)
         .send(user);
     }

@@ -7,7 +7,7 @@ describe('/api/genres', () => {
   beforeEach(() => server = require('../../../server.js'));
   afterEach(async () => {
     server.close();
-    await Genre.remove({}); // clear the genre document
+    await Genre.deleteMany({}); // clear the genre document
   });
 
 
